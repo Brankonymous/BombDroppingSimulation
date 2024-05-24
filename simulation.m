@@ -1,6 +1,9 @@
 [JET_H, JET_VEL, G, BOMB_VEL, MIN_RADIUS, dt] = constants();
 [dropTime, bombPosY] = bomb_position();
 
+video = VideoWriter('simulation.mp4', 'MPEG-4');
+open(video);
+
 jetX = 0;
 jetY = 0; 
 bombX = 0;
@@ -57,11 +60,18 @@ for i = 1:length(ts)
     set(plane_path,'XData',plane_ys(1:i),'YData',-plane_xs(1:i)  ,'ZData',JET_H * ones(size(plane_xs(1:i))));
 
     if rs(i) > sqrt( (x0 - plane_ys(i))^2 + (0 + plane_xs(i))^2 + (y0 - JET_H)^2)
-        plane_xs(i)
-        plane_ys(i)
+        finalJetPositionX = plane_xs(i);
+        finalJetPositionY = plane_ys(i);
+        finalJetPositionZ = JET_H;
+        plot3(finalJetPositionY, -finalJetPositionX, finalJetPositionZ, 'o', 'Color', 'black', 'MarkerSize', 10);
+        fprintf('  Final position: (%.2f, %.2f, %.2f)\n', finalJetPositionX, finalJetPositionY, finalJetPositionZ);
         break
     end
+
+    frame = getframe(gcf);
+    writeVideo(video, frame);
     pause(0.001);
 end
 
+close(video);
 axis equal
