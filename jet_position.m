@@ -32,31 +32,36 @@ text(jetX + 80, jetY + 80, 'D', 'FontSize', 20);
 hold on;
 
 % Caluclate phi, tangent point, time to tangent 
-phi = atan(optimal_r / bombY);
-tangentX = optimal_r + optimal_r * cos(2 * phi);
-tangentY = optimal_r * sin(2 * phi);
-timeToTangent = optimal_r * (pi - 2 * phi) / v;
+rs = MIN_RADIUS:1:10000;
+phi = atan(rs / bombY);
+tangentX = rs + rs .* cos(2 * phi);
+tangentY = rs .* sin(2 * phi);
 
-fprintf('  Phi: %.4f degrees\n', phi*180/pi);
-fprintf('  Time to tangent: %.2f seconds\n', timeToTangent);
+plot(tangentX, tangentY,'o');
 
-plot([tangentX, bombX], [tangentY, bombY], 'Color', 'black');
-hold on;
-plot(tangentX, tangentY, 'o', 'Color', 'green');
-text(tangentX + 80, tangentY + 80, 'T', 'FontSize', 20);
-hold on;
 
-plotT = linspace(0, t, 1000);
-x = optimal_r - optimal_r * cos(v * plotT / optimal_r);
-y = optimal_r * sin(v * plotT / optimal_r);
-plot(x, y, 'Color', 'blue');
-hold on;
+% timeToTangent = optimal_r * (pi - 2 * phi) / v;
 
-fprintf('  Time from O to T: %.2f seconds\n', timeToTangent);
-plotT = linspace(0, timeToTangent - t, 1000);
-x = optimal_r - optimal_r * cos(v * (t + plotT) / optimal_r);
-y = optimal_r * sin(v * (t + plotT) / optimal_r);
-plot(x, y, 'Color', 'red');
-hold on;
+% fprintf('  Phi: %.4f degrees\n', phi*180/pi);
+% fprintf('  Time to tangent: %.2f seconds\n', timeToTangent);
 
-fprintf('  Time from D to T: %.2f seconds\n', timeToTangent - t);
+% plot([tangentX, bombX], [tangentY, bombY], 'Color', 'black');
+% hold on;
+% plot(tangentX, tangentY, 'o', 'Color', 'green');
+% text(tangentX + 80, tangentY + 80, 'T', 'FontSize', 20);
+% hold on;
+
+% plotT = linspace(0, t, 1000);
+% x = optimal_r - optimal_r * cos(v * plotT / optimal_r);
+% y = optimal_r * sin(v * plotT / optimal_r);
+% plot(x, y, 'Color', 'blue');
+% hold on;
+
+% fprintf('  Time from O to T: %.2f seconds\n', timeToTangent);
+% plotT = linspace(0, timeToTangent - t, 1000);
+% x = optimal_r - optimal_r * cos(v * (t + plotT) / optimal_r);
+% y = optimal_r * sin(v * (t + plotT) / optimal_r);
+% plot(x, y, 'Color', 'red');
+% hold on;
+
+% fprintf('  Time from D to T: %.2f seconds\n', timeToTangent - t);
