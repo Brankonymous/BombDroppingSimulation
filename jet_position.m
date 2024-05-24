@@ -15,6 +15,11 @@ hold on;
 plot(bombX, bombY, 'o', 'Color', 'red');
 hold on;
 
+[tanX, tanY, phi] = findTangents(0, optimal_r, bombY);
+t = optimal_r / cos(phi) / v;
+fprintf('Phi: %.4f\n', phi*180/pi);
+fprintf('Tangent time: %.2f seconds\n', t);
+
 % FIND OPTIMAL R
 distance = @(r, t) sqrt((jetX + r - r * cos(v * t / r) - bombX)^2 + (jetY + r * sin(v * t / r) - bombY)^2);
 optimal_r = fminbnd(@(r) -distance(r, t), MIN_RADIUS, 10000);
@@ -25,23 +30,24 @@ plot(jetX, jetY, 'o', 'Color', 'green');
 hold on;
 % FIND OPTIMAL R
 
+t = dropTime;
+
 [tanX, tanY, phi] = findTangents(0, optimal_r, bombY);
 plot([tanX, bombX], [tanY, bombY], 'Color', 'black');
 hold on;
-timeToTangent = optimal_r / (pi-2*phi) / v;
+timeToTangent = optimal_r / cos(phi) / v;
 
-plotT = linspace(0, dropTime, 1000);
+plotT = linspace(0, t, 1000);
 x = optimal_r - optimal_r * cos(v * plotT / optimal_r);
 y = optimal_r * sin(v * plotT / optimal_r);
 plot(x, y, 'Color', 'blue');
 hold on;
 
-fprintf('Drop time: %.2f seconds\n', t);
 fprintf('Time from O to T: %.2f seconds\n', timeToTangent);
 plotT = linspace(0, timeToTangent, 1000);
 x = optimal_r - optimal_r * cos(v * (t + plotT) / optimal_r);
 y = optimal_r * sin(v * (t + plotT) / optimal_r);
-plot(x, y, 'Color', 'red');
+% plot(x, y, 'Color', 'red');
 hold on;
 
 fprintf('Time from T to B: %.2f seconds\n', t - timeToTangent);
