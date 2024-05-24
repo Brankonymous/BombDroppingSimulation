@@ -4,7 +4,6 @@ function [dropTime, bombPosX] = bomb_position()
 
     bombVel = JET_VEL;
     bombPosYStart = JET_H;
-    bombPosYEnd = 0;
 
     % calculate position and time of bomb drop
     dropTime = sqrt(2 * bombPosYStart / G);
