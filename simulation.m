@@ -1,77 +1,39 @@
-[JET_H, JET_VEL, G, BOMB_VEL, MIN_RADIUS, dt] = constants();
-[dropTime, bombPosY] = bomb_position();
+function [plane_xs, plane_ys, ts, xs, ys, rs] = simulation()
+    [JET_H, JET_VEL, G, BOMB_VEL, MIN_RADIUS, dt] = constants();
+    [drop_time, bombPosY] = bomb_position();
 
-video = VideoWriter('simulation.mp4', 'MPEG-4');
-open(video);
+    hirosima_x = bombPosY;
+    v = JET_VEL; 
+    t = drop_time;  
 
-jetX = 0;
-jetY = 0; 
-bombX = 0;
-bombY = bombPosY;
-v = JET_VEL; 
-t = dropTime;  
-r = MIN_RADIUS;
+    ts = 0:0.2:300;
+    [xs, ys] = bomb_location(ts);
 
-ts = 0:0.1:300;
-figure;
-hold on;
-grid on;
-axis([0 20000 -10000 10000 0 20000]);
-[xs, ys] = bomb_location(ts);
+    r = 4700
 
-% Find optimal radius
-distance = @(r, t) sqrt((jetX + r - r * cos(v * t / r) - bombX)^2 + (jetY + r * sin(v * t / r) - bombY)^2);
-optimal_r = fminbnd(@(r) -distance(r, t), MIN_RADIUS, 10000);
+    phi = atan(r / hirosima_x);
+    tangent_x = r + r * cos(2 * phi);
+    tangent_y = r * sin(2 * phi);
+    time_to_tangent = r * (pi - 2 * phi) / v;
+    fprintf('  Time to tangent: %.4f\n', time_to_tangent);
 
+    plane_xs = r - r * cos(v * ts / r);
+    plane_ys = r * sin(v * ts / r);
 
-phi = atan(optimal_r / bombY);
-tangentX = optimal_r + optimal_r * cos(2 * phi);
-tangentY = optimal_r * sin(2 * phi);
-timeToTangent = optimal_r * (pi - 2 * phi) / v;
+    plane_xs(ts >= time_to_tangent) = tangent_x + sin(pi - 2 * phi) * v 
+                        * (ts(ts > time_to_tangent) - time_to_tangent);
+    plane_ys(ts >= time_to_tangent) = tangent_y + cos(pi - 2 * phi) * v 
+                        * (ts(ts > time_to_tangent) - time_to_tangent);
 
-plane_xs = optimal_r - optimal_r * cos(v * ts / optimal_r);
-plane_ys = optimal_r * sin(v * ts / optimal_r);
+    rs = shockwave_radius(ts - drop_time);
 
-plane_xs(ts >= timeToTangent) = tangentX + sin(pi - 2 * phi) * v * (ts(ts > timeToTangent) - timeToTangent);
-plane_ys(ts >= timeToTangent) = tangentY + cos(pi - 2 * phi) *v * (ts(ts > timeToTangent) - timeToTangent);
-
-fprintf('  The optimal r is: %.4f\n', optimal_r);
-fprintf('Time toTangent: %.4f\n', timeToTangent);
-rs=shockwave_radius(ts - dropTime);
-
-x0=bombPosY;
-y0=0;
-theta = linspace(0,2*pi,100);
-[X,Y,Z] = sphere;
-bomb_path = plot3(0,0,0,'.');
-plane_path = plot3(0,0,0,'.');
-for i = 1:length(ts)
-    if ts(i) < dropTime
-        set(bomb_path,'XData',xs(1:i),'YData',zeros(size(xs(1:i))), 'ZData', ys(1:i));
-    end
-    r = rs(i);
-    if r > 0
-        X2 = X * r;
-        Y2 = Y * r;
-        Z2 = Z * r;
-
-        surf(X2+x0,Y2,Z2+y0)
-    end
-    set(plane_path,'XData',plane_ys(1:i),'YData',-plane_xs(1:i)  ,'ZData',JET_H * ones(size(plane_xs(1:i))));
-
-    if rs(i) > sqrt( (x0 - plane_ys(i))^2 + (0 + plane_xs(i))^2 + (y0 - JET_H)^2)
-        finalJetPositionX = plane_xs(i);
-        finalJetPositionY = plane_ys(i);
-        finalJetPositionZ = JET_H;
-        plot3(finalJetPositionY, -finalJetPositionX, finalJetPositionZ, 'o', 'Color', 'black', 'MarkerSize', 10);
-        fprintf('  Final position: (%.2f, %.2f, %.2f)\n', finalJetPositionX, finalJetPositionY, finalJetPositionZ);
-        break
+    vreme_sudara = 0;
+    for i = 1:length(ts)
+        if rs(i) > sqrt( (bombPosY - plane_ys(i))^2 + (0 + plane_xs(i))^2 + JET_H^2)
+            vreme_sudara = ts(i);
+            break
+        end
     end
 
-    frame = getframe(gcf);
-    writeVideo(video, frame);
-    pause(0.001);
+    fprintf('  Vreme sudara: %.4f\n', vreme_sudara)
 end
-
-close(video);
-axis equal
