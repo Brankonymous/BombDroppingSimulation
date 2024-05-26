@@ -18,8 +18,8 @@ function [plane_xs, plane_ys, ts, xs, ys, rs] = simulation()
     plane_xs = r - r * cos(v * ts / r);
     plane_ys = r * sin(v * ts / r);
 
-    plane_xs(ts >= time_to_tangent) = tangent_x + sin(pi - 2 * phi) * v * (ts(ts > time_to_tangent) - time_to_tangent);
-    plane_ys(ts >= time_to_tangent) = tangent_y + cos(pi - 2 * phi) * v * (ts(ts > time_to_tangent) - time_to_tangent);
+    plane_xs(ts >= time_to_tangent) = tangent_x + cos(pi / 2 - 2 * phi) * v * (ts(ts > time_to_tangent) - time_to_tangent);
+    plane_ys(ts >= time_to_tangent) = tangent_y - sin(pi / 2 - 2 * phi) * v * (ts(ts > time_to_tangent) - time_to_tangent);
 
     rs = shockwave_radius(ts - drop_time);
 
