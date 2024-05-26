@@ -4,5 +4,5 @@ function [JET_H, JET_VEL, G, EXPLOSION_VEL, MIN_RADIUS, dt] = constants()
     G = 9.81;
     EXPLOSION_VEL = 350;
     MIN_RADIUS = 4700;
-    dt = 0.1;
+    dt = 0.5;
 end

@@ -36,11 +36,11 @@ The idea is to reduce the problem to finding a point on this circle above which 
 
 ## How to start the simulation
 
-Run the `simulation.m` file.
+Run the `animation.m` file.
 
 # Paper 
 
-Report written in *Serbian* can be found here [insert link when uploaded].
+Report written in *Serbian* can be found [here](documentation/report.pdf).
 
 # About
 Project is done by Daniil Grbić, Igor Kandić and Branko Grbić, students of University of Belgrade as a part of the Mathematical Modeling course at Faculty of Mathematics.
