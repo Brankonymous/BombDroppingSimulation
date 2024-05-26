@@ -31,5 +31,5 @@ function [plane_xs, plane_ys, ts, xs, ys, rs] = simulation()
         end
     end
 
-    fprintf('  Vreme sudara: %.4f\n', time_of_impact);
+    fprintf('  Time of impact: %.4f\n', time_of_impact);
 end
